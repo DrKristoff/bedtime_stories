@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "959772553377",
+    "firebase_url": "https://bedtime-stories-850c3.firebaseio.com",
+    "project_id": "bedtime-stories",
+    "storage_bucket": "bedtime-stories.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:959772553377:android:02b4e496e4e19635",
+        "android_client_info": {
+          "package_name": "com.sidegigapps.bedtimestories"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "959772553377-prc0vhaqa0i9qv47ufc2qm01oo3r0ccc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgICZ5jlOEbm6ZTnGajceaUgS3p45w8R4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
