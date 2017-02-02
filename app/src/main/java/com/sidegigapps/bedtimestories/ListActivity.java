@@ -14,30 +14,54 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class ListActivity extends AppCompatActivity {
-    ServiceConnection serviceConnection;
+
+    boolean playerServiceReady = false;
+
+    ServiceConnection serviceConnection  = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            PlayerService.LocalBinder binder = (PlayerService.LocalBinder) iBinder;
+            service = binder.getService();
+            playerServiceReady = true;
+            //service.streamMusic(1);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+
+        }
+    };;
     PlayerService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
 
-        serviceConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                service = (PlayerService) iBinder;
-                service.streamMusic("music");
-            }
+        TextView song1 = (TextView) findViewById(R.id.item1);
+        TextView song2 = (TextView) findViewById(R.id.item2);
 
+        View.OnClickListener listener = new View.OnClickListener() {
             @Override
-            public void onServiceDisconnected(ComponentName componentName) {
+            public void onClick(View view) {
+                if(view.getId() == R.id.item1){
+                    service.streamMusic(0);
+                }
+                if(view.getId() == R.id.item2){
+                    service.streamMusic(1);
+                }
 
             }
         };
+
+        song1.setOnClickListener(listener);
+        song2.setOnClickListener(listener);
+
 
         final Intent playerServiceIntent = new Intent(this, PlayerService.class);
 

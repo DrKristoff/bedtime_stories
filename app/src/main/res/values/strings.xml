@@ -90,4 +90,23 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="action_settings">Settings</string>
+    <string name="rcd_debug_tag">RCD</string>
+    <string name="auth_state_signed_in">SIGNED IN</string>
+    <string name="auth_state_signed_out">SIGNED OUT</string>
+    <string name="auth_failed">Auth Failed</string>
+    <string name="status">Status</string>
+    <string name="chooser">Chooser</string>
+    <string name="cd_app_logo">App Logo</string>
+    <string name="hint_email">email</string>
+    <string name="hint_password">password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="cd_sign_in_with_google">Sing in with Google</string>
+    <string name="user_data">user_data</string>
+    <string name="prefs_user_name">prefs_user_name</string>
+    <string name="prefs_user_email">prefs_user_email</string>
+    <string name="prefs_user_photo">prefs_user_photo</string>
+    <string name="connection_failed">Connection Failed</string>
+    <string name="in_development_toast_string">Coming Soon</string>
 </resources>
