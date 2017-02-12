@@ -109,4 +109,6 @@
     <string name="prefs_user_photo">prefs_user_photo</string>
     <string name="connection_failed">Connection Failed</string>
     <string name="in_development_toast_string">Coming Soon</string>
+    <string name="title_album_list">Albums</string>
+    <string name="title_album_detail">Album Detail</string>
 </resources>

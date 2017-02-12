@@ -94,7 +94,7 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
                     //to prevent the auth listener being triggered multiple times
                     if(!Once.beenDone(Once.THIS_APP_SESSION,userSignedIn)){
                         if (!Once.beenDone(Once.THIS_APP_INSTALL, setupCompleted)) {
-                            startActivity(new Intent(BaseActivity.this, ListActivity.class));
+                            startActivity(new Intent(BaseActivity.this, AlbumListActivity.class));
 
                             //mark as done on confirmation that setup is complete, not here
                             //Once.markDone(setupCompleted);

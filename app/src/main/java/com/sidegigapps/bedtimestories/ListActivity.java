@@ -16,9 +16,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 public class ListActivity extends AppCompatActivity {
 
     boolean playerServiceReady = false;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
 
     ServiceConnection serviceConnection  = new ServiceConnection() {
         @Override
@@ -42,6 +46,8 @@ public class ListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list);
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
+
+        //StorageReference storageRef = storage.getReferenceFromUrl("gs://<your-bucket-name>");
 
         TextView song1 = (TextView) findViewById(R.id.item1);
         TextView song2 = (TextView) findViewById(R.id.item2);
