@@ -16,21 +16,21 @@ import java.util.List;
 /**
  * Created by ryand on 12/26/2015.
  */
-public class AlbumAdapter extends ArrayAdapter<AlbumPrototype> {
+public class AlbumAdapter extends ArrayAdapter<Album> {
 
     private static final String LOG_TAG = AlbumAdapter.class.getSimpleName();
 
-    List<AlbumPrototype> mMovies = new ArrayList<AlbumPrototype>();
+    List<Album> mAlbumsList = new ArrayList<Album>();
     Context mContext;
 
-    public AlbumAdapter(Activity context, List<AlbumPrototype> movies) {
+    public AlbumAdapter(Activity context, List<Album> movies) {
         super(context, 0, movies);
-        this.mMovies = movies;
+        this.mAlbumsList = movies;
         mContext = context;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        AlbumPrototype album = getItem(position);
+        Album album = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.album_grid_item, parent, false);
@@ -39,12 +39,8 @@ public class AlbumAdapter extends ArrayAdapter<AlbumPrototype> {
         ImageView iconView = (ImageView) convertView.findViewById(R.id.grid_item_imageView);
         //iconView.setImageResource(album.image);
 
-        final String MOVIE_BASE_URL = " http://image.tmdb.org/t/p/";
-        final String SIZE = "w185";
-        final String POSTER_PATH = "poster_path";
-        final String VALUE = album.getPosterPath();
         Picasso.with(mContext).setLoggingEnabled(true);
-        Picasso.with(mContext).load(album.getPosterPath()).error(R.drawable.common_google_signin_btn_icon_dark).into(iconView);
+        Picasso.with(mContext).load(album.getCoverURL()).error(R.drawable.common_google_signin_btn_icon_dark).into(iconView);
         return convertView;
     }
 }

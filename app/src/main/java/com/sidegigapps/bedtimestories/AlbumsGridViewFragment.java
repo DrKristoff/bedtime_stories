@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,6 +32,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AlbumsGridViewFragment extends Fragment {
 
@@ -37,7 +40,7 @@ public class AlbumsGridViewFragment extends Fragment {
 
     GridView mGridView;
     private AlbumAdapter mAlbumAdapter;
-    private ArrayList<AlbumPrototype> albumArrayList = new ArrayList<AlbumPrototype>();
+    private ArrayList<Album> albumArrayList = new ArrayList<Album>();
 
     private String MOVIE_KEY = "movie_list";
 
@@ -50,7 +53,7 @@ public class AlbumsGridViewFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null)
         {
-            albumArrayList = (ArrayList<AlbumPrototype>)savedInstanceState.get(MOVIE_KEY);
+            albumArrayList = (ArrayList<Album>)savedInstanceState.get(MOVIE_KEY);
         }
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -58,9 +61,15 @@ public class AlbumsGridViewFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("RCD","CHANGED!");
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    Log.d("RCD",child.toString());
+
+                DataSnapshot albumSnapshot = dataSnapshot.child("albums");
+                for(DataSnapshot album : albumSnapshot.getChildren()){
+                    Album newAlbum = new Album(album);
+                    mAlbumAdapter.add(newAlbum);
+                    mAlbumAdapter.notifyDataSetChanged();
                 }
+
+
             }
 
             @Override
@@ -105,7 +114,7 @@ public class AlbumsGridViewFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(MOVIE_KEY, (ArrayList<? extends Parcelable>) albumArrayList);
+        //outState.putParcelableArrayList(MOVIE_KEY, (ArrayList<? extends Parcelable>) albumArrayList);
     }
 
 
@@ -125,23 +134,23 @@ public class AlbumsGridViewFragment extends Fragment {
 
     }
 
-    public class FetchMoviesTask extends AsyncTask<Void, Void, ArrayList<AlbumPrototype>> {
+    public class FetchMoviesTask extends AsyncTask<Void, Void, ArrayList<Album>> {
 
         private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
-        private ArrayList<AlbumPrototype> getMovieDataFromJSONString(String movieJSONString)
+        private ArrayList<Album> getMovieDataFromJSONString(String movieJSONString)
                 throws JSONException {
 
             final String MOVIE_LIST = "results";
 
-            ArrayList<AlbumPrototype> resultsList = new ArrayList<>();
+            ArrayList<Album> resultsList = new ArrayList<>();
 
             JSONObject movieJson = new JSONObject(movieJSONString);
             JSONArray moviesArray = movieJson.getJSONArray(MOVIE_LIST);
 
             for(int i =0; i < moviesArray.length(); i++){
                 JSONObject movie = moviesArray.getJSONObject(i);
-                resultsList.add(i, new AlbumPrototype(movie));
+                //resultsList.add(i, new Album(movie));
             }
 
             return resultsList;
@@ -149,7 +158,7 @@ public class AlbumsGridViewFragment extends Fragment {
         }
 
         @Override
-        protected ArrayList<AlbumPrototype> doInBackground(Void... params) {
+        protected ArrayList<Album> doInBackground(Void... params) {
 
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
@@ -246,10 +255,10 @@ public class AlbumsGridViewFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(ArrayList<AlbumPrototype> result) {
+        protected void onPostExecute(ArrayList<Album> result) {
             if (result != null) {
                 mAlbumAdapter.clear();
-                for(AlbumPrototype album : result) {
+                for(Album album : result) {
                     mAlbumAdapter.add(album);
                 }
               // New data is back from the server.  Hooray!
@@ -259,7 +268,7 @@ public class AlbumsGridViewFragment extends Fragment {
 
     public interface MovieSelectedCallback {
 
-        public void onItemSelected(AlbumPrototype album);
+        public void onItemSelected(Album album);
     }
 
 }
