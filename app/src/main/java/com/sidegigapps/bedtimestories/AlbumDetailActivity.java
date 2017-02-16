@@ -18,6 +18,8 @@ import android.view.MenuItem;
  */
 public class AlbumDetailActivity extends AppCompatActivity {
 
+    Album album;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,19 +42,12 @@ public class AlbumDetailActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        // savedInstanceState is non-null when there is fragment state
-        // saved from previous configurations of this activity
-        // (e.g. when rotating the screen from portrait to landscape).
-        // In this case, the fragment will automatically be re-added
-        // to its container so we don't need to manually add it.
-        // For more information, see the Fragments API guide at:
-        //
-        // http://developer.android.com/guide/components/fragments.html
-        //
+        Bundle bundle = getIntent().getExtras();
+        album = (Album)bundle.get(AlbumDetailFragment.ALBUM);
+
         if (savedInstanceState == null) {
             Bundle arguments = new Bundle();
-            arguments.putString(AlbumDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(AlbumDetailFragment.ARG_ITEM_ID));
+            arguments.putParcelable(AlbumDetailFragment.ALBUM, album);
             AlbumDetailFragment fragment = new AlbumDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()

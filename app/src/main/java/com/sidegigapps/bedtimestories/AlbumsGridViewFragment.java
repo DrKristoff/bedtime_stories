@@ -3,8 +3,6 @@ package com.sidegigapps.bedtimestories;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,7 +17,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,7 +29,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class AlbumsGridViewFragment extends Fragment {
 
@@ -40,9 +36,8 @@ public class AlbumsGridViewFragment extends Fragment {
 
     GridView mGridView;
     private AlbumAdapter mAlbumAdapter;
-    private ArrayList<Album> albumArrayList = new ArrayList<Album>();
-
-    private String MOVIE_KEY = "movie_list";
+    private ArrayList<Album> albumArrayList = new ArrayList<>();
+    private ArrayList<Story> storyArrayList = new ArrayList<>();
 
     public AlbumsGridViewFragment() {
         // Required empty public constructor
@@ -53,22 +48,21 @@ public class AlbumsGridViewFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null)
         {
-            albumArrayList = (ArrayList<Album>)savedInstanceState.get(MOVIE_KEY);
+            //albumArrayList = (ArrayList<Album>)savedInstanceState.get(MOVIE_KEY);
         }
 
+
+        //TODO: add progress bar over screen as Firebase is loading data into grid view
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("RCD","CHANGED!");
-
                 DataSnapshot albumSnapshot = dataSnapshot.child("albums");
                 for(DataSnapshot album : albumSnapshot.getChildren()){
                     Album newAlbum = new Album(album);
                     mAlbumAdapter.add(newAlbum);
                     mAlbumAdapter.notifyDataSetChanged();
                 }
-
 
             }
 
@@ -95,7 +89,7 @@ public class AlbumsGridViewFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                ((MovieSelectedCallback) getActivity()).onItemSelected(mAlbumAdapter.getItem(position));
+                ((AlbumSelectedCallback) getActivity()).onItemSelected(mAlbumAdapter.getItem(position));
                 Log.d("RCD",String.valueOf("position: " + position));
 
             }
@@ -266,7 +260,7 @@ public class AlbumsGridViewFragment extends Fragment {
         }
     }
 
-    public interface MovieSelectedCallback {
+    public interface AlbumSelectedCallback {
 
         public void onItemSelected(Album album);
     }
