@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -16,10 +17,13 @@ import java.util.List;
 public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<StoryRecyclerViewAdapter.CustomViewHolder> {
     private List<Story> storyList;
     private Context mContext;
+    private OnItemSelected onItemSelected;
+    private AlbumDetailFragment fragment;
 
-    public StoryRecyclerViewAdapter(Context context, List<Story> storyList) {
+    public StoryRecyclerViewAdapter(Context context, List<Story> storyList, AlbumDetailFragment albumDetailFragment) {
         this.storyList = storyList;
         this.mContext = context;
+        fragment = albumDetailFragment;
     }
 
     @Override
@@ -31,8 +35,16 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<StoryRecycler
 
     @Override
     public void onBindViewHolder(CustomViewHolder customViewHolder, int i) {
-        Story story = storyList.get(i);
+        final Story story = storyList.get(i);
         customViewHolder.textView.setText(story.getStoryTitle());
+        customViewHolder.index = i;
+        customViewHolder.view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragment.onItemSelected(story);
+            }
+        });
+
     }
 
     public void add(Story story){
@@ -47,10 +59,20 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<StoryRecycler
     class CustomViewHolder extends RecyclerView.ViewHolder {
         //protected ImageView imageView;
         protected TextView textView;
+        protected View view;
+        protected int index;
 
         public CustomViewHolder(View view) {
             super(view);
+            this.view = view;
             this.textView = (TextView) view.findViewById(R.id.title);
+
         }
+
+
+    }
+
+    public interface OnItemSelected {
+        public void onItemSelected(Story story);
     }
 }

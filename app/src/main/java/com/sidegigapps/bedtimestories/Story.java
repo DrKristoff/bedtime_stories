@@ -11,14 +11,26 @@ import java.util.ArrayList;
  */
 
 public class Story {
-    String id;
-    String url;
-    String storyTitle;
+    private String id;
+    private String url;
+    private String coverURL;
+
+    public int getDuration() {
+        return duration;
+    }
+
+    private int duration;
+    private String storyTitle;
+
+    public String getUrl() {
+        return url;
+    }
 
     public Story(DataSnapshot storySnapshot){
         id = storySnapshot.getKey();
         url = (String) storySnapshot.child("URL").getValue();
         storyTitle = (String) storySnapshot.child("storyTitle").getValue();
+        duration = Integer.parseInt((String)storySnapshot.child("duration_ms").getValue());
         //TODO: error handling if database data is malformed
     }
 

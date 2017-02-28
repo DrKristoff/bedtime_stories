@@ -1,0 +1,42 @@
+{
+  "albums": {
+    "000001": {
+      "albumTitle":"title",
+      "coverURL":"url",
+      "stories": [
+        "0000001",
+        "0000002"
+        ]
+    },
+    "000002": {
+      "albumTitle":"title",
+      "coverURL":"url",
+      "stories": [
+        "0000003",
+        "0000004"
+        ]
+    },
+    "000003": {
+      "albumTitle":"title",
+      "coverURL":"url",
+      "stories": [
+        "0000005",
+        "0000006"
+        ]
+    }
+  },
+  "stories": {
+    "0000001": {
+      "storyTitle":"title",
+      "URL":"url"
+    },
+    "0000002": {
+      "storyTitle":"title",
+      "URL":"url"
+    },
+    "0000003": {
+      "storyTitle":"title",
+      "URL":"url"
+    }
+  }
+}

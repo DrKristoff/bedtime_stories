@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -30,7 +31,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class AlbumsGridViewFragment extends Fragment {
+public class AlbumsGridViewFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private DatabaseReference mDatabase;
 
@@ -52,6 +53,10 @@ public class AlbumsGridViewFragment extends Fragment {
         }
 
 
+        mAlbumAdapter = new AlbumAdapter(getActivity(), albumArrayList);
+
+        ((AlbumListActivity)getActivity()).showProgressDialog();
+
         //TODO: add progress bar over screen as Firebase is loading data into grid view
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -64,11 +69,15 @@ public class AlbumsGridViewFragment extends Fragment {
                     mAlbumAdapter.notifyDataSetChanged();
                 }
 
+                //TODO:  detect if internet is connected.  If not the progress bar shows indefinitely
+                ((AlbumListActivity)getActivity()).hideProgressDialog();
+
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.d("RCD","cancelled");
+                ((AlbumListActivity)getActivity()).hideProgressDialog();
 
             }
         });
@@ -81,8 +90,11 @@ public class AlbumsGridViewFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_albums, container, false);
         mGridView = (GridView) rootView.findViewById(R.id.gridView);
 
-        mAlbumAdapter = new AlbumAdapter(getActivity(), albumArrayList);
         mGridView.setAdapter(mAlbumAdapter);
+
+        //TODO: not working, fix later
+        //SwipeRefreshLayout layout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefresh);
+       //layout.setOnRefreshListener(this);
 
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
@@ -95,13 +107,11 @@ public class AlbumsGridViewFragment extends Fragment {
             }
         });
 
-        updateMovies();
         return rootView;
     }
 
     @Override
     public void onResume() {
-        updateMovies();  //update posters after settings preference changed
         super.onResume();
     }
 
@@ -121,11 +131,9 @@ public class AlbumsGridViewFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void updateMovies(){
-        FetchMoviesTask moviesTask = new FetchMoviesTask();
-        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        //moviesTask.execute();
-
+    @Override
+    public void onRefresh() {
+        ((AlbumListActivity)getActivity()).onRefresh();
     }
 
     public class FetchMoviesTask extends AsyncTask<Void, Void, ArrayList<Album>> {

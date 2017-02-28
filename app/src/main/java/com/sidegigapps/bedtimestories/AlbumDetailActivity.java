@@ -1,6 +1,7 @@
 package com.sidegigapps.bedtimestories;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
+import android.widget.SeekBar;
 
 /**
  * An activity representing a single AlbumPrototype detail screen. This
@@ -16,9 +18,11 @@ import android.view.MenuItem;
  * item details are presented side-by-side with a list of items
  * in a {@link AlbumListActivity}.
  */
-public class AlbumDetailActivity extends AppCompatActivity {
+public class AlbumDetailActivity extends BaseActivity  {
 
     Album album;
+    public BaseActivity baseActivity;
+    SeekBar seekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +31,7 @@ public class AlbumDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
+        baseActivity = (BaseActivity)this;
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,4 +70,5 @@ public class AlbumDetailActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

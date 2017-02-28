@@ -37,7 +37,7 @@ public class ListActivity extends AppCompatActivity {
         public void onServiceDisconnected(ComponentName componentName) {
 
         }
-    };;
+    };
     PlayerService service;
 
     @Override
@@ -56,10 +56,10 @@ public class ListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(view.getId() == R.id.item1){
-                    service.streamMusic(0);
+                    //service.streamMusic(0);
                 }
                 if(view.getId() == R.id.item2){
-                    service.streamMusic(1);
+                    //service.streamMusic(1);
                 }
 
             }

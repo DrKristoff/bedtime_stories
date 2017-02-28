@@ -1,19 +1,22 @@
 package com.sidegigapps.bedtimestories;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 
-public class AlbumListActivity extends AppCompatActivity implements AlbumsGridViewFragment.AlbumSelectedCallback {
+public class AlbumListActivity extends BaseActivity implements
+        AlbumsGridViewFragment.AlbumSelectedCallback {
     private boolean mTwoPane;
+
+    public ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.album_list);
-
-        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setTitle(getStoryTitle());*/
 
         if (findViewById(R.id.album_detail_container) != null) {
             mTwoPane = true;
@@ -38,6 +41,30 @@ public class AlbumListActivity extends AppCompatActivity implements AlbumsGridVi
                 startActivity(intent);
 
             }
+
+    }
+
+    public void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setIndeterminate(true);
+        }
+        mProgressDialog.show();
+    }
+
+    public void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+    }
+
+    public void onRefresh() {
+        //TODO: not working, fix later
+        /*Fragment fragment = getSupportFragmentManager().findFragmentByTag("gridView");
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.detach(fragment);
+        ft.attach(new AlbumsGridViewFragment());
+        ft.commit();*/
 
     }
 }

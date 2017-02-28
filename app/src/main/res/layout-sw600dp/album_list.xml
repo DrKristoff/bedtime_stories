@@ -26,6 +26,7 @@
         android:layout_weight="2"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:tag="gridView"
         tools:context="com.sidegigapps.bedtimestories.AlbumListActivity"
         tools:listitem="@android:layout/list_content" />
 

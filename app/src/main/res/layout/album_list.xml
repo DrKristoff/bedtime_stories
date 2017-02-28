@@ -9,6 +9,7 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
+    android:tag="gridView"
     tools:context="com.sidegigapps.bedtimestories.AlbumListActivity"
     tools:listitem="@layout/album_list_content"
     android:layout_weight="2"

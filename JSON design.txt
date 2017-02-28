@@ -1,0 +1,34 @@
+albums
+  albumUUID
+    albumTitle
+    coverURL
+    stories
+      storyUUID
+      storyUUID
+      storyUUID
+      storyUUID
+  albumUUID
+    albumTitle
+    coverURL
+    stories
+      storyUUID
+      storyUUID
+  albumUUID
+    albumTitle
+    coverURL
+    stories
+      storyUUID
+      storyUUID
+
+
+stories
+  UUID
+    storytitle
+    URL
+  UUID
+    storytitle
+    URL
+  UUID
+    storytitle
+    URL
+  
