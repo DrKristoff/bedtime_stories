@@ -119,7 +119,9 @@ public class AlbumDetailFragment extends BaseFragment implements
     }
 
     private void initializeRecyclerViewRows() {
+        if(albumSelected.getStoryList()==null) return;
         for(String storyID : albumSelected.getStoryList()){
+
             //storyListAdapter.add(fullStoryMap.get(storyID));
             if(fullStoryMap.containsKey(storyID)) {
                 storyArrayList.add(fullStoryMap.get(storyID));
@@ -161,7 +163,7 @@ public class AlbumDetailFragment extends BaseFragment implements
             Toast.makeText(getActivity(),"Playback Error",Toast.LENGTH_SHORT).show();
         }
 
-        Toast.makeText(getActivity(),"Pressed " + String.valueOf(story.getStoryTitle()),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity(),"Pressed " + String.valueOf(story.getStoryTitle()),Toast.LENGTH_SHORT).show();
     }
 
     @Override

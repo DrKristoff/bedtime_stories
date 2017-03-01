@@ -1,5 +1,18 @@
 package com.sidegigapps.bedtimestories;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
+
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by ryand on 2/28/2017.
  */
@@ -69,4 +82,119 @@ public class Utils {
         // return current duration in milliseconds
         return currentDuration * 1000;
     }
+
+    public static void createNewFireBaseAlbum(Context context, String albumName) {
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        String key = String.valueOf(Utils.getMaxAlbumKey(context)+1);
+
+        Album newAlbum = new Album(albumName);
+        Map<String, Object> albumValues = newAlbum.toMap();
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/albums/" + key, albumValues);
+
+        mDatabase.updateChildren(childUpdates);
+    }
+
+    public static void createNewFireBaseStory(Context context, String storyName, int duration_ms) {
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        String key = String.valueOf(Utils.getMaxStoryKey(context)+1);
+
+        Story newStory = new Story(key, storyName, duration_ms);
+        Map<String, Object> albumValues = newStory.toMap();
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/stories/" + key, albumValues);
+
+        mDatabase.updateChildren(childUpdates);
+    }
+
+    public static int getMaxAlbumKey(Context context){
+        SharedPreferences prefs = context.getSharedPreferences("maxKeys",Context.MODE_PRIVATE);
+        return prefs.getInt("maxAlbumKey",0);
+    }
+
+    public static int getMaxStoryKey(Context context){
+        SharedPreferences prefs = context.getSharedPreferences("maxKeys",Context.MODE_PRIVATE);
+        return prefs.getInt("maxStoryKey",0);
+    }
+
+    private static void updateMaxAlbumKey(Context context, int maxValue) {
+        SharedPreferences prefs = context.getSharedPreferences("maxKeys",Context.MODE_PRIVATE);
+        prefs.edit().putInt("maxAlbumKey",maxValue).apply();
+    }
+
+    private static void updateMaxStoryKey(Context context, int maxValue) {
+        SharedPreferences prefs = context.getSharedPreferences("maxKeys",Context.MODE_PRIVATE);
+        prefs.edit().putInt("maxStoryKey",maxValue).apply();
+    }
+
+    public static void findNextAvailableStoryKey(final Context context, DatabaseReference reference){
+
+        reference.orderByValue().addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+                int maxValue = getMaxStoryKey(context);
+                int value = Integer.parseInt(dataSnapshot.getKey());
+                if(value > maxValue) updateMaxStoryKey(context, value);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+        });
+    }
+
+    public static void findNextAvailableAlbumKey(final Context context, DatabaseReference reference){
+
+        reference.orderByValue().addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+                int maxValue = getMaxAlbumKey(context);
+                int value = Integer.parseInt(dataSnapshot.getKey());
+                if(value > maxValue) updateMaxAlbumKey(context, value);
+                Log.d("RCD",String.valueOf(value));
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+        });
+    }
+
 }

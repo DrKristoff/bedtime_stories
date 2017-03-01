@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +20,7 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<StoryRecycler
     private Context mContext;
     private OnItemSelected onItemSelected;
     private AlbumDetailFragment fragment;
+    private CustomViewHolder activeViewHolder;
 
     public StoryRecyclerViewAdapter(Context context, List<Story> storyList, AlbumDetailFragment albumDetailFragment) {
         this.storyList = storyList;
@@ -38,12 +40,6 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<StoryRecycler
         final Story story = storyList.get(i);
         customViewHolder.textView.setText(story.getStoryTitle());
         customViewHolder.index = i;
-        customViewHolder.view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fragment.onItemSelected(story);
-            }
-        });
 
     }
 
@@ -56,9 +52,10 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<StoryRecycler
         return (null != storyList ? storyList.size() : 0);
     }
 
-    class CustomViewHolder extends RecyclerView.ViewHolder {
-        //protected ImageView imageView;
+    public class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         protected TextView textView;
+        public ImageView playPause;
+        protected boolean isActiveStory;
         protected View view;
         protected int index;
 
@@ -66,13 +63,24 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<StoryRecycler
             super(view);
             this.view = view;
             this.textView = (TextView) view.findViewById(R.id.title);
+            this.playPause = (ImageView) view.findViewById(R.id.playPauseToggleButton);
+            this.isActiveStory = false;
+            view.setOnClickListener(this);
 
         }
 
+        @Override
+        public void onClick(View v) {
+            final Story story = storyList.get(getAdapterPosition());
+            fragment.onItemSelected(story);
+            isActiveStory = true;
 
+            playPause.setVisibility(View.VISIBLE);
+            Toast.makeText(mContext,"Clicked Position: " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     public interface OnItemSelected {
-        public void onItemSelected(Story story);
+        void onItemSelected(Story story);
     }
 }

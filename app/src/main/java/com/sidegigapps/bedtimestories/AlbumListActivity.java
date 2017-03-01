@@ -1,11 +1,13 @@
 package com.sidegigapps.bedtimestories;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.FloatingActionButton;
+import android.text.InputType;
+import android.view.View;
+import android.widget.EditText;
 
 public class AlbumListActivity extends BaseActivity implements
         AlbumsGridViewFragment.AlbumSelectedCallback {
@@ -17,6 +19,40 @@ public class AlbumListActivity extends BaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.album_list);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //new Album dialog
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(AlbumListActivity.this);
+                builder.setTitle("Album Title");
+
+                final EditText input = new EditText(AlbumListActivity.this);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setView(input);
+
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String albumName = input.getText().toString();
+
+                        //create new Album in Firebase
+                        Utils.createNewFireBaseAlbum(getApplicationContext(),albumName);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+            }
+        });
 
         if (findViewById(R.id.album_detail_container) != null) {
             mTwoPane = true;

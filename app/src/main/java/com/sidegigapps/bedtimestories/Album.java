@@ -4,8 +4,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.Exclude;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by ryand on 2/10/2017.
@@ -19,6 +22,13 @@ public class Album implements Parcelable {
 
     public Album(String albumTitle, String coverURL){
 
+    }
+
+    public Album(String albumTitle){
+        this.albumTitle = albumTitle;
+        this.coverURL = "https://firebasestorage.googleapis.com/v0/b/bedtime-stories.appspot.com/o/no-image-box.png?alt=media&token=da49528b-9f81-455b-8811-891758783464";
+        //no image URL
+        storyList = new ArrayList<>();
     }
 
     public Album(DataSnapshot snapshot){
@@ -78,5 +88,15 @@ public class Album implements Parcelable {
 
     public ArrayList<String> getStoryList() {
         return storyList;
+    }
+
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("albumTitle", albumTitle);
+        result.put("coverURL", coverURL);
+        result.put("storyList", storyList);
+
+        return result;
     }
 }

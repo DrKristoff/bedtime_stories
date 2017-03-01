@@ -34,6 +34,7 @@ import java.util.ArrayList;
 public class AlbumsGridViewFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private DatabaseReference mDatabase;
+    SwipeRefreshLayout swipeLayout;
 
     GridView mGridView;
     private AlbumAdapter mAlbumAdapter;
@@ -52,17 +53,26 @@ public class AlbumsGridViewFragment extends Fragment implements SwipeRefreshLayo
             //albumArrayList = (ArrayList<Album>)savedInstanceState.get(MOVIE_KEY);
         }
 
+        loadData();
 
+    }
+
+    private void loadData(){
         mAlbumAdapter = new AlbumAdapter(getActivity(), albumArrayList);
+        mDatabase = null;
+
+        //Detect max Album key and Story key for use when user adds album
+        Utils.findNextAvailableAlbumKey(getActivity(),FirebaseDatabase.getInstance().getReference("albums"));
+        Utils.findNextAvailableStoryKey(getActivity(),FirebaseDatabase.getInstance().getReference("stories"));
 
         ((AlbumListActivity)getActivity()).showProgressDialog();
 
-        //TODO: add progress bar over screen as Firebase is loading data into grid view
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 DataSnapshot albumSnapshot = dataSnapshot.child("albums");
+                mAlbumAdapter.clear();
                 for(DataSnapshot album : albumSnapshot.getChildren()){
                     Album newAlbum = new Album(album);
                     mAlbumAdapter.add(newAlbum);
@@ -81,6 +91,7 @@ public class AlbumsGridViewFragment extends Fragment implements SwipeRefreshLayo
 
             }
         });
+
     }
 
     @Override
@@ -93,8 +104,8 @@ public class AlbumsGridViewFragment extends Fragment implements SwipeRefreshLayo
         mGridView.setAdapter(mAlbumAdapter);
 
         //TODO: not working, fix later
-        //SwipeRefreshLayout layout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefresh);
-       //layout.setOnRefreshListener(this);
+        swipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefresh);
+        swipeLayout.setOnRefreshListener(this);
 
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
@@ -133,7 +144,15 @@ public class AlbumsGridViewFragment extends Fragment implements SwipeRefreshLayo
 
     @Override
     public void onRefresh() {
-        ((AlbumListActivity)getActivity()).onRefresh();
+        //((AlbumListActivity)getActivity()).onRefresh();
+        mAlbumAdapter.clear();
+        mAlbumAdapter.notifyDataSetChanged();
+
+        loadData();
+
+        if (swipeLayout.isRefreshing()) {
+            swipeLayout.setRefreshing(false);
+        }
     }
 
     public class FetchMoviesTask extends AsyncTask<Void, Void, ArrayList<Album>> {
