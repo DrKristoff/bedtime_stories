@@ -111,4 +111,7 @@
     <string name="in_development_toast_string">Coming Soon</string>
     <string name="title_album_list">Albums</string>
     <string name="title_album_detail">Album Detail</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

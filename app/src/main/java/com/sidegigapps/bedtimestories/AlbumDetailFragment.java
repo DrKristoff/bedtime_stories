@@ -1,19 +1,16 @@
 package com.sidegigapps.bedtimestories;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.media.MediaPlayer;
 import android.os.Handler;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,19 +21,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class AlbumDetailFragment extends BaseFragment implements
         StoryRecyclerViewAdapter.OnItemSelected,
         SeekBar.OnSeekBarChangeListener, MediaPlayer.OnSeekCompleteListener{
 
     private DatabaseReference mDatabase;
-    public static final String ALBUM = "Album_Selected";
     private Album albumSelected;
 
     private Handler mHandler = new Handler();
@@ -50,6 +43,7 @@ public class AlbumDetailFragment extends BaseFragment implements
 
     SeekBar seekBar;
     TextView currentTimeLabel, totalTimeLabel;
+    RecyclerView recyclerView;
 
     PlayerService service;
 
@@ -60,7 +54,7 @@ public class AlbumDetailFragment extends BaseFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        service = baseActivity.getService();
+        service = baseActivity.getPlaybackService();
 
         //TODO: this works with a smart phone, but what about tablet?  The seekbar will need to be added to a different activity layout
         seekBar = (SeekBar) getActivity().findViewById(R.id.seek_bar);
@@ -74,20 +68,15 @@ public class AlbumDetailFragment extends BaseFragment implements
         //TODO: remove seekbar null check
         Log.d("RCD","NULL? " + String.valueOf(seekBar==null));
 
-        if (getArguments().containsKey(ALBUM)) {
-            albumSelected = getArguments().getParcelable(ALBUM);
+        if (getArguments().containsKey(AlbumDetailActivity.ALBUM)) {
+            albumSelected = getArguments().getParcelable(AlbumDetailActivity.ALBUM);
             if(albumSelected==null) return;
 
             Activity activity = this.getActivity();
-            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-            ImageView coverImage = (ImageView) activity.findViewById(R.id.header_logo);
+            ActionBar actionBar = activity.getActionBar();
 
-            Picasso.with(getActivity()).load(albumSelected.getCoverURL())
-                    .error(R.drawable.common_google_signin_btn_icon_dark).into(coverImage);
-
-
-            if (appBarLayout != null) {
-                appBarLayout.setTitle(albumSelected.getTitle());
+            if (actionBar != null) {
+                actionBar.setTitle(albumSelected.getTitle());
             }
         }
 
@@ -139,9 +128,9 @@ public class AlbumDetailFragment extends BaseFragment implements
 
         //TODO:  fix the list items so they look better!
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.VERTICAL);
-        recyclerView.addItemDecoration(dividerItemDecoration);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
+        //DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.VERTICAL);
+        //recyclerView.addItemDecoration(dividerItemDecoration);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         storyListAdapter = new StoryRecyclerViewAdapter(getActivity(),storyArrayList, this);
@@ -150,15 +139,20 @@ public class AlbumDetailFragment extends BaseFragment implements
         return rootView;
     }
 
+    public void onPlayPauseTogglePressed(Story story){
+
+    }
+
     @Override
     public void onItemSelected(Story story) {
 
         //ToDo: crashes if you select the same song again
         //play the story
-        if(service==null) service=baseActivity.getService();
+        if(service==null) service=baseActivity.getPlaybackService();
         if(service!=null){
             service.streamMusic(story);
             updateProgressBar();
+            storyListAdapter.notifyDataSetChanged();
         } else {
             Toast.makeText(getActivity(),"Playback Error",Toast.LENGTH_SHORT).show();
         }
@@ -174,7 +168,7 @@ public class AlbumDetailFragment extends BaseFragment implements
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        Log.d("RCD","onProgressChanged");
+        //Log.d("RCD","onProgressChanged");
     }
 
     @Override
@@ -230,4 +224,12 @@ public class AlbumDetailFragment extends BaseFragment implements
 
         }
     };
+
+    public void hidePlayPauseButton(int position) {
+
+        RecyclerView.ViewHolder holder =  recyclerView.findViewHolderForLayoutPosition(position);
+        if(holder!=null){
+            ((StoryRecyclerViewAdapter.CustomViewHolder)holder).playPause.setVisibility(View.INVISIBLE);
+        }
+    }
 }

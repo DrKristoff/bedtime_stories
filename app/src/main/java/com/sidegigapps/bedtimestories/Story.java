@@ -37,10 +37,11 @@ public class Story {
         //TODO: error handling if database data is malformed
     }
 
-    public Story(String key, String title, int duration_ms){
+    public Story(String key, String title, int duration_ms, String downloadURL){
         this.id = key;
         this.storyTitle = title;
         this.duration = duration_ms;
+        this.url = downloadURL;
     }
 
     public String getStoryTitle() {

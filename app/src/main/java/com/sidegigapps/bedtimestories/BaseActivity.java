@@ -11,6 +11,7 @@ public class BaseActivity extends AppCompatActivity {
 
     boolean playerServiceReady = false;
     PlayerService service;
+    AudioRecordingService recordingService;
 
     ServiceConnection serviceConnection  = new ServiceConnection() {
         @Override
@@ -27,14 +28,35 @@ public class BaseActivity extends AppCompatActivity {
         }
     };
 
-    public PlayerService getService(){
+    private boolean readyToRecord;
+
+    ServiceConnection recordingServiceConnection  = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            AudioRecordingService.LocalBinder binder = (AudioRecordingService.LocalBinder) iBinder;
+            recordingService = binder.getService();
+            readyToRecord = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+
+        }
+    };
+
+    public PlayerService getPlaybackService(){
         return service;
+    }
+
+    public AudioRecordingService getRecordingService(){
+        return recordingService;
     }
     @Override
     protected void onDestroy() {
         super.onDestroy();
         service.stopStreaming();
         unbindService(serviceConnection);
+        unbindService(recordingServiceConnection);
     }
 
     @Override
@@ -43,5 +65,8 @@ public class BaseActivity extends AppCompatActivity {
 
         final Intent playerServiceIntent = new Intent(this, PlayerService.class);
         bindService(playerServiceIntent, serviceConnection, BIND_AUTO_CREATE);
+
+        final Intent recordingServiceIntent = new Intent(this, AudioRecordingService.class);
+        bindService(recordingServiceIntent, recordingServiceConnection, BIND_AUTO_CREATE);
     }
 }

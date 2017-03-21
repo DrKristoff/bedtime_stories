@@ -20,7 +20,7 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<StoryRecycler
     private Context mContext;
     private OnItemSelected onItemSelected;
     private AlbumDetailFragment fragment;
-    private CustomViewHolder activeViewHolder;
+    private int currentStory=-1;
 
     public StoryRecyclerViewAdapter(Context context, List<Story> storyList, AlbumDetailFragment albumDetailFragment) {
         this.storyList = storyList;
@@ -64,19 +64,29 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<StoryRecycler
             this.view = view;
             this.textView = (TextView) view.findViewById(R.id.title);
             this.playPause = (ImageView) view.findViewById(R.id.playPauseToggleButton);
+            this.playPause.setVisibility(View.INVISIBLE);
             this.isActiveStory = false;
-            view.setOnClickListener(this);
+            this.textView.setOnClickListener(this);
+            this.playPause.setOnClickListener(this);
 
         }
 
         @Override
         public void onClick(View v) {
-            final Story story = storyList.get(getAdapterPosition());
-            fragment.onItemSelected(story);
-            isActiveStory = true;
+            if(v.getId()==R.id.title){
+                if(currentStory == getAdapterPosition()){
+                  return;
+                }
+                fragment.hidePlayPauseButton(currentStory);
+                currentStory = getAdapterPosition();
+                final Story story = storyList.get(currentStory);
+                fragment.onItemSelected(story);
+                isActiveStory = true;
+                playPause.setVisibility(View.VISIBLE);
+            } else if(v.getId()==R.id.playPauseToggleButton){
+                Toast.makeText(mContext,"Toggle: " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
+            }
 
-            playPause.setVisibility(View.VISIBLE);
-            Toast.makeText(mContext,"Clicked Position: " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
         }
     }
 

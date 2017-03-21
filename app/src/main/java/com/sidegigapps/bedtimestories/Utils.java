@@ -2,6 +2,7 @@ package com.sidegigapps.bedtimestories;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.util.Log;
 
 import com.google.firebase.database.ChildEventListener;
@@ -9,7 +10,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.UploadTask;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,7 +88,6 @@ public class Utils {
 
     public static void createNewFireBaseAlbum(Context context, String albumName) {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-
         String key = String.valueOf(Utils.getMaxAlbumKey(context)+1);
 
         Album newAlbum = new Album(albumName);
@@ -97,12 +99,12 @@ public class Utils {
         mDatabase.updateChildren(childUpdates);
     }
 
-    public static void createNewFireBaseStory(Context context, String storyName, int duration_ms) {
+    public static void createNewFireBaseStory(Context context, String storyName, int duration_ms, String downloadURL) {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
         String key = String.valueOf(Utils.getMaxStoryKey(context)+1);
 
-        Story newStory = new Story(key, storyName, duration_ms);
+        Story newStory = new Story(key, storyName, duration_ms, downloadURL);
         Map<String, Object> albumValues = newStory.toMap();
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/stories/" + key, albumValues);
@@ -197,4 +199,15 @@ public class Utils {
         });
     }
 
+    public static String generateFileNameByCurrentTimeStamp(){
+        return new SimpleDateFormat("yyyy-MM-dd:HH.mm.ss").format(new java.util.Date()) + ".3gp";
+    }
+
+    public static void addFileMetaDataToFirebase(Context context, String storyName, Album albumSelected, int duration_ms, UploadTask.TaskSnapshot taskSnapshot) {
+        @SuppressWarnings("VisibleForTests")
+        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+        String urlString = downloadUrl.toString();
+
+        createNewFireBaseStory(context,storyName,duration_ms,urlString);
+    }
 }

@@ -64,7 +64,7 @@ public class AlbumListActivity extends BaseActivity implements
             if(mTwoPane){
                 AlbumDetailFragment fragment = new AlbumDetailFragment();
                 Bundle args = new Bundle();
-                args.putParcelable(AlbumDetailFragment.ALBUM, album);
+                args.putParcelable(AlbumDetailActivity.ALBUM, album);
                 fragment.setArguments(args);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.album_detail_container, fragment, "TAG")
@@ -73,7 +73,7 @@ public class AlbumListActivity extends BaseActivity implements
             } else {
 
                 Intent intent = new Intent(this, AlbumDetailActivity.class);
-                intent.putExtra(AlbumDetailFragment.ALBUM,album);
+                intent.putExtra(AlbumDetailActivity.ALBUM,album);
                 startActivity(intent);
 
             }

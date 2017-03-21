@@ -13,8 +13,6 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
-import com.google.firebase.storage.StorageReference;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -37,6 +35,8 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
 
         stopStreaming();
 
+        if(story.getUrl()==null) return;
+
         Log.d("RCD",String.valueOf(story.getDuration()));
         fileDuration = story.getDuration();
 
@@ -53,6 +53,7 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
             }
         });
         try {
+
             mediaPlayer.setDataSource(story.getUrl());
             mediaPlayer.prepareAsync();
         } catch (IOException e) {
@@ -76,6 +77,14 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
             mediaPlayer.stop();
             mediaPlayer.reset();
         }
+    }
+
+    public void togglePlayPause(){
+        if(mediaPlayer.isPlaying()){
+            mediaPlayer.stop();
+            mediaPlayer.reset();
+        }
+
     }
 
     public void scrubTo(int seekBarLocation){
